@@ -1,0 +1,13 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Helm upgrade production
+        run: echo "helm upgrade ai-copilot infrastructure/helm/ai-copilot -f infrastructure/helm/ai-copilot/values.production.yaml"

@@ -1,0 +1,3 @@
+"""Celery Beat schedule."""
+
+

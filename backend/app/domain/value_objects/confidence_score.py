@@ -1,0 +1,3 @@
+"""Value object: confidence score."""
+
+

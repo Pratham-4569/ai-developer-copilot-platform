@@ -1,0 +1,3 @@
+"""Domain entity: agent finding."""
+
+

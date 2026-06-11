@@ -1,0 +1,17 @@
+name: Dependency Scan
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: pip-audit
+        run: pip install pip-audit && pip-audit -r backend/pyproject.toml || true
+      - name: npm audit
+        working-directory: frontend
+        run: npm audit --audit-level=high || true

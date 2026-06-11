@@ -1,0 +1,3 @@
+"""Chat scope resolution."""
+
+

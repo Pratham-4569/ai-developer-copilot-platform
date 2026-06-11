@@ -1,0 +1,3 @@
+"""Value object: job status."""
+
+

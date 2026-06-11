@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Node
+node_modules/
+dist/
+*.local
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+*.swp
+
+# Code Review Graph
+.code-review-graph/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.log
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Docker
+*.pid
+
+# Coverage
+coverage/
+
+# Misc
+tmp/
+temp/

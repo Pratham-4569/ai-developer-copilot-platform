@@ -1,0 +1,20 @@
+services:
+  backend:
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+  celery-indexing:
+    deploy:
+      replicas: 2
+
+  celery-analysis:
+    deploy:
+      replicas: 2
+
+  celery-agent:
+    deploy:
+      replicas: 3

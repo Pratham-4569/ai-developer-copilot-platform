@@ -1,0 +1,19 @@
+replicaCount:
+  backend: 2
+  celeryIndexing: 2
+  celeryAnalysis: 2
+  celeryAgents: 3
+
+image:
+  backend:
+    repository: ai-copilot-backend
+    tag: latest
+  frontend:
+    repository: ai-copilot-frontend
+    tag: latest
+
+ingress:
+  enabled: true
+  host: copilot.local
+
+resources: {}

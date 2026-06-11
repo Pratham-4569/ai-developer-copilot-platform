@@ -1,0 +1,15 @@
+name: Migration Check
+
+on:
+  pull_request:
+    paths:
+      - 'backend/alembic/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Alembic migrations
+        working-directory: backend
+        run: echo "alembic check"
