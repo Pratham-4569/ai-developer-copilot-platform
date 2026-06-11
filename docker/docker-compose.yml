@@ -15,6 +15,28 @@ services:
       timeout: 5s
       retries: 5
 
+  pgbouncer:
+    # PgBouncer in transaction pooling mode.
+    # The application (FastAPI + Celery workers) connects to pgbouncer:5432.
+    # Alembic migrations connect directly to postgres:5432 via DATABASE_DIRECT_URL.
+    #
+    # Transaction mode requires asyncpg prepared_statement_cache_size=0
+    # (already configured in infrastructure/db/session.py).
+    image: edoburu/pgbouncer:latest
+    environment:
+      DATABASE_URL: "postgres://copilot:copilot@postgres:5432/copilot"
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: "100"
+      DEFAULT_POOL_SIZE: "20"
+      MIN_POOL_SIZE: "5"
+      AUTH_TYPE: plain
+      SERVER_RESET_QUERY: ""   # Must be empty in transaction mode
+    ports:
+      - "6432:5432"            # External 6432 for local debugging; app uses internal DNS
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   redis:
     image: redis:7-alpine
     ports:
@@ -44,6 +66,27 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-setup:
+    # One-shot container: creates the copilot-dev bucket on first run.
+    # Exits with code 0 after setup; Docker Compose does not restart it.
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 minioadmin minioadmin &&
+        mc mb local/copilot-dev --ignore-existing &&
+        echo 'MinIO bucket copilot-dev is ready' &&
+        exit 0
+      "
+    restart: "no"
 
   backend:
     build:
@@ -54,12 +97,14 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      postgres:
-        condition: service_healthy
+      pgbouncer:
+        condition: service_started
       redis:
         condition: service_healthy
       qdrant:
         condition: service_started
+      minio-setup:
+        condition: service_completed_successfully
 
   celery-indexing:
     build:
@@ -69,7 +114,7 @@ services:
       - ../backend/.env.example
     depends_on:
       - redis
-      - postgres
+      - pgbouncer
 
   celery-analysis:
     build:
@@ -80,7 +125,7 @@ services:
       - ../backend/.env.example
     depends_on:
       - redis
-      - postgres
+      - pgbouncer
 
   celery-agent:
     build:
@@ -91,7 +136,7 @@ services:
       - ../backend/.env.example
     depends_on:
       - redis
-      - postgres
+      - pgbouncer
       - qdrant
 
   celery-beat:
