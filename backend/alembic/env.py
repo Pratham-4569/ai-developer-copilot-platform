@@ -94,14 +94,23 @@ else:
 # ---------------------------------------------------------------------------
 # ORM model imports — populate Base.metadata for autogenerate.
 #
-# Add one import per model module here as models are introduced in Phase 3.2+.
-# The import order does not matter; SQLAlchemy collects all Table objects
-# from all imported modules into Base.metadata automatically.
+# Each import below is a deliberate side-effect import: executing the module
+# causes SQLAlchemy's DeclarativeBase metaclass to register every Table
+# object defined in that module into Base.metadata.  Without these imports
+# Base.metadata is empty and autogenerate produces an empty migration.
 #
-# Example (do not un-comment until the module exists):
-#   from app.infrastructure.db.models import tenant_models  # noqa: F401
-#   from app.infrastructure.db.models import auth_models    # noqa: F401
+# Naming convention:
+#   - One import per model module.
+#   - Import order does not matter; SQLAlchemy resolves FK references lazily.
+#   - All imports must appear BEFORE the target_metadata assignment below.
+#   - Add one line here for each new model module introduced in Phase 3.4+.
+#
+# noqa: F401 suppresses the "imported but unused" lint warning.  These
+# imports ARE used — their side effect (table registration) is the purpose.
 # ---------------------------------------------------------------------------
+from app.infrastructure.db.models import auth_models    # noqa: F401
+from app.infrastructure.db.models import tenant_models  # noqa: F401
+
 from app.infrastructure.db.base import Base  # noqa: E402
 
 # ---------------------------------------------------------------------------
