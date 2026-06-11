@@ -52,10 +52,9 @@ def _make_engine(url: str) -> AsyncEngine:
             # Disable asyncpg's named prepared statement cache.
             # PgBouncer transaction mode routes each statement to any backend
             # connection, making named prepared statements invalid.
-            'prepared_statement_cache_size': 0,
+            'prepared_statement_cache_size': 0
             # Disable server-side JIT; avoids unexpected per-connection GUC
             # state that PgBouncer cannot reset between pooled transactions.
-            'server_settings': {'jit': 'off'},
         },
     )
 
