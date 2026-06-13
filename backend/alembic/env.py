@@ -108,8 +108,9 @@ else:
 # noqa: F401 suppresses the "imported but unused" lint warning.  These
 # imports ARE used — their side effect (table registration) is the purpose.
 # ---------------------------------------------------------------------------
-from app.infrastructure.db.models import auth_models    # noqa: F401
-from app.infrastructure.db.models import tenant_models  # noqa: F401
+from app.infrastructure.db.models import auth_models       # noqa: F401
+from app.infrastructure.db.models import repository_models  # noqa: F401
+from app.infrastructure.db.models import tenant_models      # noqa: F401
 
 from app.infrastructure.db.base import Base  # noqa: E402
 
